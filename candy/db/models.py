@@ -25,29 +25,30 @@ class CourierType(enum.Enum):
     car = 'car'
 
 
-class Couriers(Base):
+class Courier(Base):
     __tablename__ = 'couriers'
 
     id = Column(Integer, primary_key=True)
     courier_type = Column(Enum(CourierType))
     regions = Column(ARRAY(Integer))
     working_hours = Column(ARRAY(String))
-    rating = Column(Numeric)
-    earning = Column(Integer)
+    rating = Column(Numeric, default=0)
+    earning = Column(Integer, default=0)
     busy = Column(Boolean, default=False)
 
     order = relationship('Order')
 
 
-class Orders(Base):
+class Order(Base):
     __tablename__ = 'orders'
 
     id = Column(Integer, primary_key=True)
-    weight = Column(Numeric, nullable=False)
-    region = Column(Integer, nullable=False)
-    delivery_hours = Column(ARRAY(String), nullable=False)
+    weight = Column(Numeric)
+    region = Column(Integer)
+    delivery_hours = Column(ARRAY(String))
     assign_time = Column(String)
     completed = Column(Boolean, default=False)
     completed_time = Column(String)
-
     courier_id = Column(Integer, ForeignKey('couriers.id'))
+
+    courier = relationship('Courier')

@@ -53,7 +53,7 @@ setup(
             # source distribution для него может собираться с помощью более
             # ранних версий Python. Не стоит лишать пользователей этой
             # возможности.
-            # '{0}-api = {0}.api.__main__:main'.format(module_name),
+            '{0}-api = {0}.api.__main__:main'.format(module_name),
             '{0}-db = {0}.db.__main__:main'.format(module_name)
         ]
     },

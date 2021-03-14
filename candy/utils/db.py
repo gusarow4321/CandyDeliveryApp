@@ -29,7 +29,7 @@ def make_alembic_config(cmd_opts: Union[Namespace, SimpleNamespace],
     if not os.path.isabs(alembic_location):
         config.set_main_option('script_location',
                                os.path.join(base_path, alembic_location))
-    if cmd_opts.pg_url:
-        config.set_main_option('sqlalchemy.url', cmd_opts.pg_url)
+    if cmd_opts.db_url:
+        config.set_main_option('sqlalchemy.url', cmd_opts.db_url)
 
     return config

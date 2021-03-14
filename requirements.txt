@@ -1,6 +1,10 @@
 fastapi~=0.63
+uvicorn~=0.13.4
 alembic~=1.5.7
 SQLAlchemy~=1.3.23
+psycopg2~=2.8.6
 setuptools~=52.0.0
 pydantic~=1.8.1
 ConfigArgParse~=1.3
+setproctitle~=1.2.2
+argparse~=1.4.0
