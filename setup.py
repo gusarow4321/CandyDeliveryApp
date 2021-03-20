@@ -2,7 +2,7 @@ import os
 from importlib.machinery import SourceFileLoader
 
 from pkg_resources import parse_requirements
-from setuptools import find_packages, setup
+from setuptools import setup
 
 module_name = 'candy'
 

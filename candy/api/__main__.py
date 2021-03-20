@@ -38,6 +38,18 @@ group = parser.add_argument_group('Logging options')
 group.add_argument('--log-level', default='info', choices=('debug', 'info', 'warning', 'error', 'fatal'))
 
 
+def create_app(db_url) -> FastAPI:
+    app = FastAPI()
+    app.add_middleware(DBSessionMiddleware, db_url=db_url)
+
+    app.add_exception_handler(RequestValidationError, handler=validation_exc_handler)
+
+    app.include_router(couriers_router)
+    app.include_router(orders_router)
+
+    return app
+
+
 def main():
     logging.basicConfig(level=logging.DEBUG)
 
@@ -47,13 +59,7 @@ def main():
 
     setproctitle(os.path.basename(argv[0]))
 
-    app = FastAPI()
-    app.add_middleware(DBSessionMiddleware, db_url=args.db_url)
-
-    app.add_exception_handler(RequestValidationError, handler=validation_exc_handler)
-
-    app.include_router(couriers_router)
-    app.include_router(orders_router)
+    app = create_app(args.db_url)
 
     uvicorn.run(app, host=args.address, port=args.port)
 

@@ -1,30 +1,33 @@
 from typing import List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Extra, Field, PositiveInt, constr
+from datetime import datetime
 
 from candy.db.models import CourierType
+
+hours = constr(regex="^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]-(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$")
 
 
 class ItemId(BaseModel):
     id: int
 
 
-class AssignOrder(BaseModel):
+class AssignOrder(BaseModel, extra=Extra.forbid):
     courier_id: int
 
 
 class CompleteOrder(AssignOrder):
     order_id: int
-    complete_time: str
+    complete_time: datetime
 
 
-class OrderItem(BaseModel):
+class OrderItem(BaseModel, extra=Extra.forbid):
     order_id: int
-    weight: float
-    region: int
-    delivery_hours: List[str]
+    weight: float = Field(ge=0.01, le=50)
+    region: PositiveInt
+    delivery_hours: List[hours]
 
 
-class ImportOrdersReq(BaseModel):
+class ImportOrdersReq(BaseModel, extra=Extra.forbid):
     data: List[OrderItem]
 
 
@@ -54,18 +57,21 @@ class OrderCompleteRes(BaseModel):
     order_id: int
 
 
-class CourierPatch(BaseModel):
-    courier_type: CourierType
-    regions: List[int]
-    working_hours: List[str]
+class CourierPatch(BaseModel, extra=Extra.forbid):
+    courier_type: Optional[CourierType]
+    regions: Optional[List[PositiveInt]]
+    working_hours: Optional[List[hours]]
 
 
-class CourierItem(CourierPatch):
+class CourierItem(BaseModel, extra=Extra.forbid):
     courier_id: Optional[int]
+    courier_type: CourierType
+    regions: List[PositiveInt]
+    working_hours: List[hours]
 
 
 class CourierGetRes(CourierItem):
-    rating: float = 0
+    rating: Optional[float] = 0
     earning: int = 0
 
 
@@ -76,12 +82,12 @@ class Courier(CourierGetRes):
         orm_mode = True
 
 
-class ImportCouriersReq(BaseModel):
+class ImportCouriersReq(BaseModel, extra=Extra.forbid):
     data: List[CourierItem]
 
 
 class ImportCouriersCreatedRes(BaseModel):
-    couriers: List[ItemId]
+    couriers: List[ItemId] = []
 
 
 class ImportCouriersBadRes(BaseModel):
