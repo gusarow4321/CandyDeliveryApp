@@ -1,4 +1,5 @@
 fastapi~=0.63
+fastapi_sqlalchemy~=0.2.1
 uvicorn~=0.13.4
 alembic~=1.5.7
 SQLAlchemy~=1.3.23

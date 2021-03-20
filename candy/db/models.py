@@ -1,5 +1,5 @@
 import enum
-from sqlalchemy import Column, Boolean, Enum, ForeignKey, Integer, Numeric, String, ARRAY, MetaData
+from sqlalchemy import Column, Boolean, Enum, ForeignKey, Integer, Numeric, String, ARRAY, MetaData, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -34,7 +34,6 @@ class Courier(Base):
     working_hours = Column(ARRAY(String))
     rating = Column(Numeric, default=0)
     earning = Column(Integer, default=0)
-    busy = Column(Boolean, default=False)
 
     order = relationship('Order')
 
@@ -46,9 +45,9 @@ class Order(Base):
     weight = Column(Numeric)
     region = Column(Integer)
     delivery_hours = Column(ARRAY(String))
-    assign_time = Column(String)
+    assign_time = Column(DateTime)
     completed = Column(Boolean, default=False)
-    completed_time = Column(String)
+    completed_time = Column(DateTime)
     courier_id = Column(Integer, ForeignKey('couriers.id'))
 
     courier = relationship('Courier')
