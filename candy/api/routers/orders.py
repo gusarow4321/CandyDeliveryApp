@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, status
 from fastapi.responses import Response
 from fastapi_sqlalchemy import db
 from candy.api.crud import (
@@ -20,7 +20,7 @@ from candy.api.schema import (
     CompleteOrder,
     OrderCompleteRes,
 )
-from candy.utils.utils import is_ranges_crossing, get_max_weight, get_earning_coef
+from candy.utils.utils import is_ranges_crossing, get_max_weight, get_earnings_coef
 from datetime import datetime
 
 router = APIRouter(
@@ -29,7 +29,7 @@ router = APIRouter(
 )
 
 
-@router.post("/")
+@router.post("", status_code=status.HTTP_201_CREATED)
 async def import_orders(req: ImportOrdersReq):
     res = ImportOrdersCreatedRes()
     for order in req.data:
@@ -73,7 +73,7 @@ async def complete(req: CompleteOrder):
     orders = await get_completed_orders(db.session, courier.id)
 
     rating = 0
-    if len(orders) != 0:
+    if len(list(orders)) != 0:
         tds = dict()
         tds[orders[0].region] = [round(orders[0].completed_time.timestamp()) - round(orders[0].assign_time.timestamp())]
         for i, order in enumerate(orders[1:]):
@@ -81,10 +81,10 @@ async def complete(req: CompleteOrder):
             tds[order.region].append(
                 round(order.completed_time.timestamp()) - round(orders[i-1].completed_time.timestamp())
             )
-        tds = [sum(td) / len(td) for td in tds]
+        tds = [sum(td) / len(td) for td in tds.values()]
         t = min(tds)
         rating = (60 * 60 - min(t, 60 * 60)) / (60 * 60) * 5
-    earning_val = 500 * get_earning_coef(courier.courier_type)
-    await update_earnings_and_rating(db.session, courier.id, earning_val, rating)
+    earnings_val = 500 * get_earnings_coef(courier.courier_type)
+    await update_earnings_and_rating(db.session, courier.id, earnings_val, rating)
 
     return OrderCompleteRes(order_id=req.order_id)

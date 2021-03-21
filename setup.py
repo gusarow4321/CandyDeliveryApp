@@ -2,7 +2,7 @@ import os
 from importlib.machinery import SourceFileLoader
 
 from pkg_resources import parse_requirements
-from setuptools import setup
+from setuptools import setup, find_packages
 
 module_name = 'candy'
 
@@ -42,9 +42,9 @@ setup(
         'Programming Language :: Python :: Implementation :: CPython'
     ],
     python_requires='>=3.9',
-    # packages=find_packages(exclude=['tests']),
+    packages=find_packages(exclude=['tests']),
     install_requires=load_requirements('requirements.txt'),
-    # extras_require={'dev': load_requirements('requirements.dev.txt')},
+    extras_require={'dev': load_requirements('requirements.dev.txt')},
     entry_points={
         'console_scripts': [
             # f-strings в setup.py не используются из-за соображений

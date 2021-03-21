@@ -23,7 +23,7 @@ async def get_courier(db: Session, courier_id: int) -> Courier_model:
 
 
 async def update_courier(db: Session, courier_id: int, courier: CourierPatch):
-    courier_db: Courier_model = db.query(Courier_model).filter(Courier_model.id == courier_id).first()
+    courier_db = db.query(Courier_model).filter(Courier_model.id == courier_id).first()
     if courier_db is None:
         return None
     if courier.courier_type is not None:
@@ -37,8 +37,8 @@ async def update_courier(db: Session, courier_id: int, courier: CourierPatch):
 
 
 async def update_earnings_and_rating(db: Session, courier_id: int, val: int, rating: float):
-    courier_db: Courier_model = db.query(Courier_model).filter(Courier_model.id == courier_id).first()
-    courier_db.earning += val
+    courier_db = db.query(Courier_model).filter(Courier_model.id == courier_id).first()
+    courier_db.earnings += val
     courier_db.rating = rating
     db.commit()
     return courier_db
@@ -62,22 +62,22 @@ async def get_order(db: Session, order_id: int):
 
 
 async def get_vacant_orders(db: Session, regions: List[int], max_weight: int):
-    return db.query(Order_model).filter(Order_model.region in regions,
-                                        Order_model.assign_time is None,
+    return db.query(Order_model).filter(Order_model.region.in_(regions),
+                                        Order_model.assign_time == None,
                                         Order_model.weight <= max_weight)
 
 
 async def get_uncompleted_orders(db: Session, courier_id: int) -> List[Order_model]:
-    return db.query(Order_model).filter(Order_model.courier_id == courier_id, Order_model.completed is False)
+    return db.query(Order_model).filter(Order_model.courier_id == courier_id, Order_model.completed == False)
 
 
 async def get_completed_orders(db: Session, courier_id: int) -> List[Order_model]:
     return db.query(Order_model).filter(Order_model.courier_id == courier_id,
-                                        Order_model.completed is True).order_by(Order_model.completed_time)
+                                        Order_model.completed == True).order_by(Order_model.completed_time)
 
 
 async def cancel_order(db: Session, order_id: int):
-    order_db: Order_model = db.query(Order_model).filter(Order_model.id == order_id).first()
+    order_db = db.query(Order_model).filter(Order_model.id == order_id).first()
     order_db.assign_time = None
     order_db.courier_id = None
     db.commit()
@@ -85,7 +85,7 @@ async def cancel_order(db: Session, order_id: int):
 
 
 async def update_assign_time(db: Session, order_id: int, dt: datetime, courier_id: int):
-    order_db: Order_model = db.query(Order_model).filter(Order_model.id == order_id).first()
+    order_db = db.query(Order_model).filter(Order_model.id == order_id).first()
     order_db.assign_time = dt
     order_db.courier_id = courier_id
     db.commit()
@@ -93,14 +93,10 @@ async def update_assign_time(db: Session, order_id: int, dt: datetime, courier_i
 
 
 async def complete_order(db: Session, order_id: int, courier_id: int, complete_time: datetime):
-    order_db: Order_model = db.query(Order_model).filter(Order_model.id == order_id).first()
+    order_db = db.query(Order_model).filter(Order_model.id == order_id).first()
     if order_db is None or order_db.courier_id is None or order_db.courier_id != courier_id:
         return None
     order_db.completed_time = complete_time
     order_db.completed = True
     db.commit()
     return order_db
-
-
-# def update_order(db: Session, order: Order_schema):
-#     order_db: Order_model = db.query(Order_model).filter(Order_model.id == order.id).first()

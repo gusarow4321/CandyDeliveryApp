@@ -33,7 +33,7 @@ class Courier(Base):
     regions = Column(ARRAY(Integer))
     working_hours = Column(ARRAY(String))
     rating = Column(Numeric, default=0)
-    earning = Column(Integer, default=0)
+    earnings = Column(Integer, default=0)
 
     order = relationship('Order')
 

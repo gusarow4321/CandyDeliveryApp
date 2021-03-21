@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, status
 from fastapi.responses import Response
 from fastapi_sqlalchemy import db
 from candy.api.crud import create_courier, get_courier, update_courier, get_uncompleted_orders, cancel_order
@@ -18,7 +18,7 @@ router = APIRouter(
 )
 
 
-@router.post("/")
+@router.post("", status_code=status.HTTP_201_CREATED)
 async def import_couriers(req: ImportCouriersReq):
     res = ImportCouriersCreatedRes()
     for courier in req.data:
@@ -39,7 +39,7 @@ async def get_courier_by_id(courier_id: int):
         regions=courier.regions,
         working_hours=courier.working_hours,
         rating=courier.rating,
-        earning=courier.earning,
+        earnings=courier.earnings,
     )
     return res.dict(exclude={} if res.rating != 0 else {'rating'})
 
@@ -52,10 +52,10 @@ async def update_courier_by_id(courier_id: int, courier: CourierPatch):
 
     uncompleted = await get_uncompleted_orders(db.session, courier_id)
     for order in uncompleted:
-        weight_check = order <= get_max_weight(res.courier_type)
-        regions_check = order.region in res.regions
-        hours_check = is_ranges_crossing(res.working_hours, order.delivery_hours)
-        if not weight_check or not regions_check or not hours_check:
+        weight_check = order.weight > get_max_weight(res.courier_type)
+        regions_check = order.region not in res.regions
+        hours_check = not is_ranges_crossing(res.working_hours, order.delivery_hours)
+        if weight_check or regions_check or hours_check:
             await cancel_order(db.session, order.id)
 
     return CourierItem(

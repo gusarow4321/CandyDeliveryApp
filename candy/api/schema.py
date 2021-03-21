@@ -42,7 +42,7 @@ class Order(OrderItem, AssignOrder):
 
 
 class ImportOrdersCreatedRes(BaseModel):
-    orders: List[ItemId]
+    orders: List[ItemId] = []
 
 
 class ImportOrdersBadRes(BaseModel):
@@ -50,7 +50,7 @@ class ImportOrdersBadRes(BaseModel):
 
 
 class AssignRes(ImportOrdersCreatedRes):
-    assign_time: str
+    assign_time: str = ''
 
 
 class OrderCompleteRes(BaseModel):
@@ -72,7 +72,7 @@ class CourierItem(BaseModel, extra=Extra.forbid):
 
 class CourierGetRes(CourierItem):
     rating: Optional[float] = 0
-    earning: int = 0
+    earnings: int = 0
 
 
 class Courier(CourierGetRes):

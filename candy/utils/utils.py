@@ -19,8 +19,18 @@ def is_ranges_crossing(hours1, hours2):
 
 
 def get_max_weight(courier_type):
-    return {'foot': 10, 'bike': 15, 'car': 50}[courier_type]
+    if courier_type == 'foot':
+        return 10
+    elif courier_type == 'bike':
+        return 15
+    else:
+        return 50
 
 
-def get_earning_coef(courier_type):
-    return {'foot': 2, 'bike': 5, 'car': 9}[courier_type]
+def get_earnings_coef(courier_type):
+    if courier_type == 'foot':
+        return 2
+    elif courier_type == 'bike':
+        return 5
+    else:
+        return 9

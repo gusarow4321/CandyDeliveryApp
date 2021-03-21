@@ -40,7 +40,7 @@ group.add_argument('--log-level', default='info', choices=('debug', 'info', 'war
 
 def create_app(db_url) -> FastAPI:
     app = FastAPI()
-    app.add_middleware(DBSessionMiddleware, db_url=db_url)
+    app.add_middleware(DBSessionMiddleware, db_url=db_url, engine_args={'connect_args': {"options": "-c timezone=utc"}})
 
     app.add_exception_handler(RequestValidationError, handler=validation_exc_handler)
 
