@@ -1,0 +1,36 @@
+---
+
+- name: Gathering facts
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+- name: Install docker
+  hosts: docker
+  become: yes
+  gather_facts: no
+  roles:
+    - docker
+
+- hosts: docker
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Copy tarball to host
+      copy:
+        src: ./image.tar
+        dest: /home/entrant/image.tar
+
+    - name: Load container from tarball
+      docker_image:
+        name: gusarow4321/backendschool2021:0.0.2
+        load_path: /home/entrant/image.tar
+        state: present
+        source: load
+
+- name: Install candy
+  hosts: api
+  become: yes
+  gather_facts: no
+  roles:
+    - candy

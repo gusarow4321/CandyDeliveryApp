@@ -1,0 +1,23 @@
+version: "3.4"
+services:
+  postgres:
+    restart: always
+    image: postgres:12
+    environment:
+      POSTGRES_USER: {{ candy_pg_user }}
+      POSTGRES_PASSWORD: {{ candy_pg_password }}
+      POSTGRES_DB: {{ candy_pg_dbname }}
+    volumes:
+      - /var/lib/postgresql/data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  candy:
+    restart: always
+    image: {{ candy_image }}
+    command: candy-api
+    ports:
+      - 8080:{{ candy_port }}
+    environment:
+      CANDY_DB_URL: postgresql://{{ candy_pg_user }}:{{ candy_pg_password }}@postgres/{{ candy_pg_dbname }}
+      CANDY_PORT: {{ candy_port }}

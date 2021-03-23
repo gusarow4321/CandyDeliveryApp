@@ -13,7 +13,7 @@ def main():
     alembic = CommandLine()
     alembic.parser.formatter_class = argparse.ArgumentDefaultsHelpFormatter
     alembic.parser.add_argument(
-        '--db-url', default=os.getenv('CD_DB_URL', DEFAULT_DB_URL), help='Database URL [env var: CD_DB_URL]'
+        '--db-url', default=os.getenv('CANDY_DB_URL', DEFAULT_DB_URL), help='Database URL [env var: CANDY_DB_URL]'
     )
 
     options = alembic.parser.parse_args()
