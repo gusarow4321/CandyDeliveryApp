@@ -1,3 +1,4 @@
 include README.rst
 include requirements*.txt
 include candy/alembic.ini
+include candy/db/alembic/versions/*.py
